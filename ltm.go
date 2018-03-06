@@ -1102,30 +1102,30 @@ type Monitors struct {
 
 // Monitor contains information about each individual monitor.
 type Monitor struct {
-	Name           string
-	Partition      string
-	FullPath       string
-	Generation     int
-	ParentMonitor  string
-	Database       string
-	Description    string
-	Destination    string
-	Interval       int
-	IPDSCP         int
-	ManualResume   bool
-	MonitorType    string
-	Password       string
-	ReceiveColumn  string
-	ReceiveRow     string
-	ReceiveString  string
+	Name          string
+	Partition     string
+	FullPath      string
+	Generation    int
+	ParentMonitor string
+	Database      string
+	Description   string
+	Destination   string
+	Interval      int
+	IPDSCP        int
+	ManualResume  bool
+	MonitorType   string
+	Password      string
+	ReceiveColumn string
+	ReceiveRow    string
+	// ReceiveString  string
 	ReceiveDisable string
 	Reverse        bool
-	SendString     string
-	TimeUntilUp    int
-	Timeout        int
-	Transparent    bool
-	UpInterval     int
-	Username       string
+	// SendString     string
+	TimeUntilUp int
+	Timeout     int
+	Transparent bool
+	UpInterval  int
+	Username    string
 }
 
 type monitorDTO struct {
@@ -1141,18 +1141,18 @@ type monitorDTO struct {
 	IPDSCP        int    `json:"ipDscp,omitempty"`
 	ManualResume  string `json:"manualResume,omitempty" bool:"enabled"`
 	// MonitorType    string `json:"monitorType,omitempty"`
-	Password       string `json:"password,omitempty"`
-	ReceiveColumn  string `json:"recvColumn,omitempty"`
-	ReceiveRow     string `json:"recvRow,omitempty"`
-	ReceiveString  string `json:"recv,omitempty"`
+	Password      string `json:"password,omitempty"`
+	ReceiveColumn string `json:"recvColumn,omitempty"`
+	ReceiveRow    string `json:"recvRow,omitempty"`
+	// ReceiveString  string `json:"recv,omitempty"`
 	ReceiveDisable string `json:"recvDisable,omitempty"`
 	Reverse        string `json:"reverse,omitempty" bool:"enabled"`
-	SendString     string `json:"send,omitempty"`
-	TimeUntilUp    int    `json:"timeUntilUp,omitempty"`
-	Timeout        int    `json:"timeout,omitempty"`
-	Transparent    string `json:"transparent,omitempty" bool:"enabled"`
-	UpInterval     int    `json:"upInterval,omitempty"`
-	Username       string `json:"username,omitempty"`
+	// SendString     string `json:"send,omitempty"`
+	TimeUntilUp int    `json:"timeUntilUp,omitempty"`
+	Timeout     int    `json:"timeout,omitempty"`
+	Transparent string `json:"transparent,omitempty" bool:"enabled"`
+	UpInterval  int    `json:"upInterval,omitempty"`
+	Username    string `json:"username,omitempty"`
 }
 
 type Profiles struct {
@@ -1397,14 +1397,14 @@ func (p *Records) UnmarshalJSON(b []byte) error {
 	return marshal(p, &dto)
 }
 
-func (p *Monitor) MarshalJSON() ([]byte, error) {
-	var dto monitorDTO
-	marshal(&dto, p)
-	if strings.Contains(dto.SendString, "\r\n") {
-		dto.SendString = strings.Replace(dto.SendString, "\r\n", "\\r\\n", -1)
-	}
-	return jsonMarshal(dto)
-}
+// func (p *Monitor) MarshalJSON() ([]byte, error) {
+// 	var dto monitorDTO
+// 	marshal(&dto, p)
+// 	if strings.Contains(dto.SendString, "\r\n") {
+// 		dto.SendString = strings.Replace(dto.SendString, "\r\n", "\\r\\n", -1)
+// 	}
+// 	return jsonMarshal(dto)
+// }
 
 func (p *Monitor) UnmarshalJSON(b []byte) error {
 	var dto monitorDTO
@@ -2959,6 +2959,7 @@ func (b *BigIP) Monitors() ([]Monitor, error) {
 		"postgresql",
 		"tcp",
 		"udp",
+		"tcp-half-open",
 	}
 
 	for _, name := range monitorUris {
@@ -2978,14 +2979,14 @@ func (b *BigIP) Monitors() ([]Monitor, error) {
 
 // CreateMonitor adds a new monitor to the BIG-IP system. <monitorType> must be one of "http", "https",
 // "icmp", "gateway icmp", "inband", "postgresql", "mysql", "udp" or "tcp".
-func (b *BigIP) CreateMonitor(name, parent string, interval, timeout int, send, receive, monitorType string) error {
+func (b *BigIP) CreateMonitor(name, parent string, interval, timeout int, monitorType string) error {
 	config := &Monitor{
 		Name:          name,
 		ParentMonitor: parent,
 		Interval:      interval,
 		Timeout:       timeout,
-		SendString:    send,
-		ReceiveString: receive,
+		// SendString:    send,
+		// ReceiveString: receive,
 	}
 
 	return b.AddMonitor(config, monitorType)
